@@ -1,0 +1,10 @@
+{
+  "name": "code-replacer",
+  "version": "1.0.0",
+  "description": "批量代码替换工具",
+  "main": "replace.js",
+  "scripts": {
+    "start": "node replace.js"
+  },
+  "dependencies": {}
+}

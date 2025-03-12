@@ -1,0 +1,28 @@
+{
+  "rules": [
+    {
+      "pattern": "avue-crud",
+      "replacement": "yl-crud"
+    },
+    {
+      "pattern": "base-input-tag",
+      "replacement": "yl-input-tag"
+    },
+    {
+      "pattern": "import mixin from '@mixins/mixin'",
+      "replacement": "import { mixin } from '@jt/yl-jms-mixins'"
+    },
+    {
+      "pattern": "import { RESPONSE_CODE } from '@public/http/config'",
+      "replacement": "const { RESPONSE_CODE } = $ylConfig.http;"
+    },
+    {
+      "pattern": "import fetch from '@public/http/request'",
+      "replacement": "import fetch from '@jt/jms-common-jbs/@public/http/request'"
+    },
+    {
+      "pattern": "import { lang } from '@public/utils/filters'",
+      "replacement": "const { lang } = $ylI18n"
+    }
+  ]
+}
