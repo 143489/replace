@@ -10,10 +10,10 @@ const config = require('./replace-config.json');
 
 // 配置参数
 const sourcePaths = [
-  String.raw`D:\gitProject\国内jms\jms-web-financialreportweb\src\views\internal-settlement-bill`,
+  String.raw`C:\Users\keith.luo\Desktop\replace\alipay-Bill`,
 ];
 const outputDir = [
-  String.raw`D:\gitProject\国内jms\yl-jms-wd-financialmanagement-front\src\views\internal-settlement-bill`,
+  String.raw`C:\Users\keith.luo\Desktop\create\newReplace1`,
 ];
 const backupEnabled = false; // 是否启用备份功能
 

@@ -23,6 +23,10 @@
     {
       "pattern": "import { lang } from '@public/utils/filters'",
       "replacement": "const { lang } = $ylI18n"
+    },
+    {
+      "pattern": "avue-form",
+      "replacement": "yl-form"
     }
   ]
 }
