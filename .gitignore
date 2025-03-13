@@ -1,0 +1,31 @@
+# 依赖目录
+node_modules/
+
+# 环境变量
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# 日志目录
+logs/
+*.log
+
+# 系统文件
+.DS_Store
+
+# 编辑器配置
+.idea/
+.vscode/
+
+# 构建产物
+/dist/
+/build/
+
+# 调试文件
+*.pid
+*.seed
+
+# 本地调试文件
+*.local
