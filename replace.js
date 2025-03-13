@@ -100,7 +100,7 @@ async function processFile(filePath, outputPath, absSource) {
     for (let i = 0; i < sourcePaths.length; i++) {
       const currentSource = path.resolve(sourcePaths[i]);
       const currentOutput = path.resolve(outputDir[i]);
-if (!outputDir[i]) throw new Error(`outputDir[${i}] 未配置`);
+      if (!outputDir[i]) throw new Error(`outputDir[${i}] 未配置`);
       
       await fs.promises.mkdir(currentOutput, { recursive: true });
       
