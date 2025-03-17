@@ -1,5 +1,5 @@
 /*
- * @Description: 
+ * @Description:
  * @Author: luokang
  * @Date: 2025-03-05 10:34:20
  */
@@ -10,10 +10,12 @@ const config = require('./replace-config.json');
 
 // 配置参数
 const sourcePaths = [
-  String.raw`C:\Users\keith.luo\Desktop\replace`,
+  String.raw`D:\gitProject\国内jms\jms-web-smartdevice\src\views\vehicle-management`,
+  String.raw`D:\gitProject\国内jms\jms-web-smartdevice\src\router\modules\selfDrivingCars.js`
 ];
 const outputDir = [
-  String.raw`C:\Users\keith.luo\Desktop\create`,
+  String.raw`D:\gitProject\国内jms\yl-jms-wd-smartdevice-front\src\views\vehicle-management`,
+  String.raw`D:\gitProject\国内jms\yl-jms-wd-smartdevice-front\src\router\modules`
 ];
 const backupEnabled = false; // 是否启用备份功能
 const chalk = require('chalk');
@@ -33,7 +35,7 @@ async function processFile(filePath, createDir, absSource) {
   try {
     const relativePath = path.relative(absSource, filePath);
     const targetPath = path.join(createDir, relativePath);
-    
+
     // 创建目标目录
     await fs.promises.mkdir(path.dirname(targetPath), { recursive: true });
 
@@ -44,10 +46,10 @@ async function processFile(filePath, createDir, absSource) {
     config.rules.forEach(rule => {
       modified = modified.replace(new RegExp(rule.pattern, 'g'), rule.replacement);
     });
-    
+
     // 写入目标文件
     await fs.promises.writeFile(targetPath, modified);
-    
+
     // 保留原备份逻辑
     if (backupEnabled) {
       const backupPath = `${filePath}.bak`;
@@ -84,25 +86,25 @@ async function processFile(filePath, outputPath, absSource) {
   try {
     stats.processed++;
     const relativePath = path.relative(absSource, filePath);
-    
+
     // 添加进度显示
     const progress = ((stats.processed / stats.totalFiles) * 100).toFixed(1);
     const elapsed = ((Date.now() - stats.startTime) / 1000).toFixed(1);
     process.stdout.write(chalk.yellow(`⌛ (已用 ${elapsed}s)\r`));
 
     const targetPath = path.join(outputPath, relativePath);
-    
+
     await fs.promises.mkdir(path.dirname(targetPath), { recursive: true });
-    
+
     const content = await fs.promises.readFile(filePath, 'utf8');
     let modified = content;
-    
+
     config.rules.forEach(rule => {
       modified = modified.replace(new RegExp(rule.pattern, 'g'), rule.replacement);
     });
-    
+
     await fs.promises.writeFile(targetPath, modified);
-    
+
     // 更新替换统计
     config.rules.forEach(rule => {
       const matches = (modified.match(new RegExp(rule.pattern, 'g')) || []).length;
@@ -143,14 +145,18 @@ async function processFile(filePath, outputPath, absSource) {
       const currentSource = path.resolve(sourcePaths[i]);
       const currentOutput = path.resolve(outputDir[i]);
       if (!outputDir[i]) throw new Error(`outputDir[${i}] 未配置`);
-      
+
       await fs.promises.mkdir(currentOutput, { recursive: true });
-      
-      const stats = await fs.promises.stat(currentSource);
-      if (stats.isDirectory()) {
+
+      const sourceStat = await fs.promises.stat(currentSource);
+      if (sourceStat.isDirectory()) {
         await walk(currentSource, currentOutput, currentSource);
       } else {
-        await processFile(currentSource, currentOutput, currentSource);
+        // 处理单个文件时，使用源文件所在目录作为基准路径
+        const absSourceDir = path.dirname(currentSource);
+        await fs.promises.mkdir(path.dirname(currentOutput), { recursive: true });
+        await processFile(currentSource, currentOutput, absSourceDir);
+        stats.totalFiles = 1; // 更新文件总数统计
       }
     }
     console.log('✅ 所有文件处理完成');

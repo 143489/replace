@@ -14,7 +14,7 @@
     },
     {
       "pattern": "import { RESPONSE_CODE } from '@public/http/config'",
-      "replacement": "const { RESPONSE_CODE } = $ylConfig.http;"
+      "replacement": "const { RESPONSE_CODE } = $ylConfig.http"
     },
     {
       "pattern": "import fetch from '@public/http/request'",
@@ -27,6 +27,10 @@
     {
       "pattern": "avue-form",
       "replacement": "yl-form"
+    },
+    {
+      "pattern": "import { RULES } from '@public/utils/rules'",
+      "replacement": "const { RULES } = $ylConfig"
     }
   ]
 }
