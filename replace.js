@@ -10,13 +10,11 @@ const config = require('./replace-config.json');
 
 // 配置参数
 const sourcePaths = [
-  String.raw`D:\gitProject\国内jms\jms-web-smartdevice\src\views\vehicle-management`,
-  String.raw`D:\gitProject\国内jms\jms-web-smartdevice\src\router\modules\selfDrivingCars.js`
+  String.raw`D:\gitProject\国内jms\jms-web-smartdevice\src\views\vehicle-management\flightTotal`,
 ];
 // 输出目录
 const outputDir = [
-  String.raw`D:\gitProject\国内jms\yl-jms-wd-smartdevice-front\src\views\vehicle-management`,
-  String.raw`D:\gitProject\国内jms\yl-jms-wd-smartdevice-front\src\router\modules`
+  String.raw`D:\gitProject\国内jms\yl-jms-wd-smartdevice-front\src\views\vehicle-management\flightTotal`,
 ];
 const backupEnabled = false; // 是否启用备份功能
 const chalk = require('chalk');
@@ -101,7 +99,8 @@ async function processFile(filePath, outputPath, absSource) {
     let modified = content;
 
     config.rules.forEach(rule => {
-      modified = modified.replace(new RegExp(rule.pattern, 'g'), rule.replacement);
+      const escapedPattern = escapeRegExp(rule.pattern);  //  处理正则表达式中的特殊字符，避免正则表达式的贪婪匹配
+      modified = modified.replace(new RegExp(escapedPattern, 'g'), rule.replacement);
     });
 
     await fs.promises.writeFile(targetPath, modified);
@@ -175,3 +174,7 @@ async function processFile(filePath, outputPath, absSource) {
     process.exit(1);
   }
 })();
+
+function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}

@@ -47,6 +47,10 @@
     {
       "pattern": "import { commonFun } from '@public/utils/common'",
       "replacement": "const { commonFun } = $ylUtils"
+    },
+    {
+      "pattern": "[this.$constant.NT_AGENT_AREA]",
+      "replacement": "$ylConfig.common['NT_AGENT_AREA']"
     }
   ]
 }
