@@ -10,11 +10,11 @@ const config = require('./replace-config.json');
 
 // 配置参数
 const sourcePaths = [
-  String.raw`D:\gitProject\国内jms\jms-web-smartdevice\src\views\vehicle-management\flightTotal`,
+  path.normalize(String.raw`D:\\gitProject\\国内jms\\jms-web-smartdevice\\src\\views\\vehicle-management\\flightTotal`),
 ];
 // 输出目录
 const outputDir = [
-  String.raw`D:\gitProject\国内jms\yl-jms-wd-smartdevice-front\src\views\vehicle-management\flightTotal`,
+  path.normalize(String.raw`D:\\gitProject\\国内jms\\yl-jms-wd-smartdevice-front\\src\\views\\vehicle-management\\flightTotal`),
 ];
 const backupEnabled = false; // 是否启用备份功能
 const chalk = require('chalk');
@@ -142,8 +142,12 @@ async function processFile(filePath, outputPath, absSource) {
     }
 
     for (let i = 0; i < sourcePaths.length; i++) {
-      const currentSource = path.resolve(sourcePaths[i]);
-      const currentOutput = path.resolve(outputDir[i]);
+      const currentSource = path.resolve(
+        sourcePaths[i].replace(/[\\/]+/g, path.sep)
+      );
+      const currentOutput = path.resolve(
+        outputDir[i].replace(/[\\/]+/g, path.sep)
+      );
       if (!outputDir[i]) throw new Error(`outputDir[${i}] 未配置`);
 
       await fs.promises.mkdir(currentOutput, { recursive: true });
