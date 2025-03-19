@@ -13,6 +13,7 @@ const sourcePaths = [
   String.raw`D:\gitProject\国内jms\jms-web-smartdevice\src\views\vehicle-management`,
   String.raw`D:\gitProject\国内jms\jms-web-smartdevice\src\router\modules\selfDrivingCars.js`
 ];
+// 输出目录
 const outputDir = [
   String.raw`D:\gitProject\国内jms\yl-jms-wd-smartdevice-front\src\views\vehicle-management`,
   String.raw`D:\gitProject\国内jms\yl-jms-wd-smartdevice-front\src\router\modules`

@@ -31,6 +31,22 @@
     {
       "pattern": "import { RULES } from '@public/utils/rules'",
       "replacement": "const { RULES } = $ylConfig"
+    },
+    {
+      "pattern": "import { interfaceWaitHandle } from '@public/utils/common'",
+      "replacement": "const { interfaceWaitHandle } = $ylUtils.commonFun"
+    },
+    {
+      "pattern": "@public/utils/filters",
+      "replacement": "@jt/jms-common-jbs/@public/utils/filters"
+    },
+    {
+      "pattern": "import { GATEWAY } from '@public/config/index'",
+      "replacement": "const { GATEWAY } = $ylConfig.http"
+    },
+    {
+      "pattern": "import { commonFun } from '@public/utils/common'",
+      "replacement": "const { commonFun } = $ylUtils"
     }
   ]
 }
