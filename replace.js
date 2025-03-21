@@ -11,11 +11,13 @@ const config = require('./replace-config.json');
 
 // 配置参数
 const sourcePaths = [
-  path.normalize(String.raw`D:/gitProject/国内jms/jms-web-smartdevice/src/views/vehicle-management/flightTotal`),
+  path.normalize(String.raw`D:\gitProject\国内jms\jms-web-financialreportweb\src\views\financial-management\invoice-platform`),
+  path.normalize(String.raw`D:\gitProject\国内jms\jms-web-financialreportweb\src\views\financial-management\billing-platform`),
 ];
 // 输出目录
 const outputDir = [
-  path.normalize(String.raw`D:/gitProject/国内jms/yl-jms-wd-smartdevice-front/src/views/vehicle-management/flightTotal`),
+  path.normalize(String.raw`D:\gitProject\国内jms\yl-jms-wd-smartdevice-front\src\views\moduan-management\invoice-platform`),
+  path.normalize(String.raw`D:\gitProject\国内jms\yl-jms-wd-smartdevice-front\src\views\moduan-management\billing-platform`),
 ];
 const backupEnabled = false; // 是否启用备份功能
 const chalk = require('chalk');
@@ -138,11 +140,88 @@ async function processFile(filePath, outputPath, absSource) {
 }
 
 async function showDiffPreview(original, modified) {
-  const differences = diff.diffLines(original, modified);
-  differences.forEach(part => {
-    const color = part.added ? chalk.green.bold : part.removed ? chalk.red.strikethrough : chalk.gray;
-    console.log(color(part.value));
+  const contextLines = 10;
+  const differences = diff.diffLines(original, modified, { newlineIsToken: true });
+  
+  let outputBuffer = [];
+  let changeBlocks = [];
+
+  differences.forEach((part, index) => {
+    const lines = part.value.split('\n');
+    if (part.added || part.removed) {
+      const start = outputBuffer.length;
+      lines.forEach(line => {
+        const marker = part.added ? '▶ ' : '◀ ';
+        outputBuffer.push({ line: marker + line, type: part.added ? 'added' : 'removed' });
+      });
+      const end = outputBuffer.length - 1;
+      changeBlocks.push({ start, end });
+    } else {
+      lines.forEach(line => outputBuffer.push({ line, type: 'context' }));
+    }
   });
+
+  // 生成带上下文的预览
+  const previewLines = [];
+  // 合并所有变更块的上下文
+  const contextRange = 3;
+  let mergedRanges = [];
+  
+  changeBlocks.forEach(block => {
+    const blockStart = Math.max(0, block.start - contextRange);
+    const blockEnd = Math.min(outputBuffer.length, block.end + contextRange + 1);
+    mergedRanges.push({ start: blockStart, end: blockEnd });
+  });
+
+  // 合并重叠的区间
+  if (mergedRanges.length > 0) {
+    mergedRanges.sort((a, b) => a.start - b.start);
+    
+    let current = mergedRanges[0];
+    const result = [current];
+    
+    for (let i = 1; i < mergedRanges.length; i++) {
+      if (mergedRanges[i].start <= current.end) {
+        current.end = Math.max(current.end, mergedRanges[i].end);
+      } else {
+        current = mergedRanges[i];
+        result.push(current);
+      }
+    }
+    
+    result.forEach(range => {
+      if (range.start > 0) previewLines.push(chalk.gray('...'));
+      
+      outputBuffer.slice(range.start, range.end).forEach((item, idx) => {
+        const lineNum = range.start + idx + 1;
+        const color = item.type === 'added' ? chalk.green.bold 
+                     : item.type === 'removed' ? chalk.red.strikethrough 
+                     : chalk.gray;
+        previewLines.push(color(`${lineNum.toString().padStart(4)}: ${item.line}`));
+      });
+      
+      if (range.end < outputBuffer.length) previewLines.push(chalk.gray('...'));
+    });
+  }
+  
+  // 添加交互选项
+  const { showFullDiff } = await inquirer.prompt([{
+    type: 'confirm',
+    name: 'showFullDiff',
+    message: '是否查看完整差异？',
+    default: false,
+    when: (answers) => answers.preview
+  }]);
+
+  if (showFullDiff) {
+    console.log('\n完整差异：');
+    differences.forEach(part => {
+      const color = part.added ? chalk.green.bold : part.removed ? chalk.red.strikethrough : chalk.gray;
+      console.log(color(part.value));
+    });
+  } else {
+    console.log(previewLines.join('\n'));
+  }
 }
 
 // 强制启用chalk颜色支持
@@ -157,27 +236,8 @@ chalk.level = 3;
         name: 'preview',
         message: '是否要预览替换差异？',
         default: true
-      },
-      {
-        type: 'list',
-        name: 'previewMode',
-        message: '选择预览模式：',
-        choices: ['按文件预览', '全局预览'],
-        when: (answers) => answers.preview
-      },
-      {
-        type: 'confirm',
-        name: 'confirm',
-        message: '即将开始替换操作，请确认源路径和输出路径配置正确',
-        default: false,
-        when: (answers) => !answers.preview || answers.previewMode
       }
     ]);
-
-    if (!stats.answer.confirm) {
-      console.log(chalk.yellow('⚠️  用户取消操作'));
-      process.exit(0);
-    }
 
     // 初始化统计
     stats.startTime = Date.now();
